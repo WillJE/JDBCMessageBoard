@@ -1,33 +1,24 @@
 package com.imooc.jdbc.servlet;
 
-import java.io.IOException;
+import com.imooc.jdbc.bean.User;
+import com.imooc.jdbc.service.UserService;
+
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
- * Servlet implementation class LoginPromptServlet
+ * Ë∑≥ËΩ¨Âà∞ÁôªÂΩïÈ°µÈù¢ÁöÑServlet
+ *
+ * @version 1.0
  */
-@WebServlet(description = "µ«¬º", urlPatterns = { "/LoginPromptServlet" })
 public class LoginPromptServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public LoginPromptServlet() {
-        super();
-        System.out.println("loginPromptServlet∑√Œ ");
-    }
 
-	/**
-	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		 
-		request.getRequestDispatcher("/WEB-INF/views/biz/login.jsp").forward(request, response);
-	}
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/views/biz/login.jsp").forward(request, response);
+    }
 
 }

@@ -1,158 +1,118 @@
 package com.imooc.jdbc.dao;
 
+import com.imooc.jdbc.bean.User;
+import com.imooc.jdbc.common.ConnectionUtil;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
-import com.imooc.jdbc.bean.User;
-import com.imooc.jdbc.common.ConnectionUtil;
-
-/*
- * ÓÃ»§Dao
+/**
+ * UserDAO
+ *
+ * @version 1.0
  */
 public class UserDAO {
 
-	/*
-	 * µÇÂ¼ÑéÖ¤
-	 */
-	public User login(String username, String password) {
-		Connection conn = ConnectionUtil.getConnection();										//»ñµÃÁ¬½Ó
-		User user = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		String sql = "select * from user where username = ? and password = ?";								//²éÑ¯Óï¾ä
-		try {
-			stmt = conn.prepareStatement(sql);							
-			stmt.setString(1, username);
-			stmt.setString(2, password);
-			rs = stmt.executeQuery();								//²éÑ¯
-			if(rs.next()) {
-				user = new User();
-				user.setId(rs.getLong("id"));				
-				user.setUsername(rs.getString("username"));
-				user.setPassword(rs.getString("password"));
-				user.setRealName(rs.getString("real_name"));
-				user.setBirthday(rs.getDate("birthday"));
-				user.setPhone(rs.getString("phone"));
-				user.setAddress(rs.getString("address"));
-			}
-		} catch (SQLException e) {
-			System.out.println("µÇÂ¼Ê§°Ü");
-			e.printStackTrace();
-		} finally {
-			ConnectionUtil.release(rs, stmt, conn);  										//ÊÍ·ÅÁ¬½Ó
-		}
-		
-		return user;
-	}
-	
-	/*
-	 * ¸ù¾İID»ñÈ¡ÓÃ»§
-	 */
-	public User getUserById(long id) {
-		//System.out.println("Dao²ã´«µİÀ´µÄid=" + id);
-		User user = null;
-		Connection conn = ConnectionUtil.getConnection();						//»ñµÃÁ¬½Ó
-		String sql = "select * from user where id = ?";
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			stmt = conn.prepareStatement(sql);	
-			stmt.setLong(1, id);
-			rs = stmt.executeQuery();										//²éÑ¯
-			while (rs.next()) {
-				user = new User();
-				user.setId(id);
-				user.setUsername(rs.getString("username"));
-				user.setPassword(rs.getString("password"));
-				user.setRealName(rs.getString("real_name"));
-				user.setBirthday(rs.getDate("birthday"));
-				user.setPhone(rs.getString("phone"));
-				user.setAddress(rs.getString("address"));
-			}
-		} catch (SQLException e) {
-			System.out.println("²éÑ¯ÓÃ»§Ê§°Ü");
-			e.printStackTrace();
-		} finally {
-			ConnectionUtil.release(rs, stmt, conn); 								//ÊÍ·Å×ÊÔ´
-		}
-				
-		return user;
-	}
-	
-	/*
-	 * ĞŞ¸ÄÓÃ»§ĞÅÏ¢
-	 */
-	public boolean updateUser(User user) {
-		boolean flag = true;
-		Connection conn = ConnectionUtil.getConnection();							//»ñÈ¡Á¬½Ó
-		String sql = "update user set username=?,password=?,real_name=?,birthday=?,phone=?,address=?  where id=?";
-		PreparedStatement stmt = null;
-		
-		try {
-			stmt = conn.prepareStatement(sql);
-			System.out.println(conn.getAutoCommit());
-			stmt.setString(1, user.getUsername());
-			stmt.setString(2, user.getPassword());
-			stmt.setString(3, user.getRealName());
-			stmt.setDate(4, new Date(user.getBirthday().getTime())); 			//Ç°ºóDateÀàĞÍ²»Ò»Ñù
-			stmt.setString(5, user.getPhone());
-			stmt.setString(6, user.getAddress());
-			stmt.setLong(7, user.getId());
-			System.err.println("Dao²ãId:"  + user.getId());
-			int num = stmt.executeUpdate();														//Ö´ĞĞSQLÓï¾ä
-			if(num > 0) {
-				System.out.println("¸üĞÂÓÃ»§ĞÅÏ¢³É¹¦");
-			} else {
-				System.out.println("¸üĞÂÓÃ»§ĞÅÏ¢Ê§Ğ§");
-			}
-		} catch (SQLException e) {
-			System.out.println("¸üĞÂÓÃ»§ĞÅÏ¢Ê§°Ü");
-			e.printStackTrace();
-			flag = false;
-		} finally {
-			ConnectionUtil.release(null, stmt, conn);
-		}
-		return flag;	
-	}
-	
-	/*
-	 * Ôö¼ÓÓÃ»§
-	 */
-	public boolean addUser(User user) {
-		boolean flag = true;
-		Connection conn = ConnectionUtil.getConnection();							//»ñÈ¡Á¬½Ó
-		String sql = "insert into user(username,password,real_name,birthday,phone,address) values(?,?,?,?,?,?)";
-		PreparedStatement stmt = null;
-		try {
-			
-			stmt =  conn.prepareStatement(sql);					
-			//ÉèÖÃ²ÎÊı
-			stmt.setString(1, user.getUsername());
-			stmt.setString(2, user.getPassword());
-			stmt.setString(3, user.getRealName());
-			Timestamp timestamp = new Timestamp(user.getBirthday().getTime());
-			stmt.setTimestamp(4, timestamp);
-			stmt.setString(5, user.getPhone());
-			stmt.setString(6, user.getAddress());
-			
-			int num = stmt.executeUpdate();
-			if(num > 0) {
-				flag = true;
-			} else {
-				flag = false;
-				System.out.println("Ôö¼ÓÓÃ»§Î´³É¹¦");
-			}
-		} catch (SQLException e) {
-			System.out.println("Ôö¼ÓÓÃ»§Òì³£");
-			e.printStackTrace();			
-		} finally {
-			ConnectionUtil.release(null, stmt, conn);
-		}
-		
-		return flag;
-	}
+    /**
+     * ç”¨æˆ·ç™»å½•
+     * @param username ç”¨æˆ·å
+     * @param password å¯†ç 
+     * @return æˆåŠŸè¿”å›ç”¨æˆ·Beanï¼Œå¤±è´¥è¿”å›null
+     */
+    public User login(String username, String password) {
+        Connection conn = ConnectionUtil.getConnection();
+        String sql = "select * from user where username = ? and password = ?";
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        User user = null;
+        try {
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                user = new User();
+                user.setId(rs.getLong("id"));
+                user.setName(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRealName(rs.getString("real_name"));
+                user.setBirthday(rs.getDate("birthday"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+            }
+        } catch (SQLException e) {
+            System.out.println("ç™»å½•å¤±è´¥ã€‚");
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.release(rs, stmt, conn);
+        }
+        return user;
+    }
+
+    /**
+     * æ ¹æ®IDæŸ¥è¯¢ç”¨æˆ·ä¿¡æ¯
+     * @param id
+     * @return
+     */
+    public User getUserById(Long id) {
+        Connection conn = ConnectionUtil.getConnection();
+        String sql = "select * from user where id = ?";
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        User user = null;
+        try {
+            stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, id);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                user = new User();
+                user.setId(rs.getLong("id"));
+                user.setName(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRealName(rs.getString("real_name"));
+                user.setBirthday(rs.getDate("birthday"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+            }
+        } catch (SQLException e) {
+            System.out.println("æŸ¥è¯¢ç”¨æˆ·ä¿¡æ¯å¤±è´¥ã€‚");
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.release(rs, stmt, conn);
+        }
+        return user;
+    }
+
+    /**
+     * ä¿®æ”¹ç”¨æˆ·ä¿¡æ¯
+     * @param user
+     * @return
+     */
+    public boolean updateUser(User user) {
+        Connection conn = ConnectionUtil.getConnection();
+        String sql = "UPDATE user SET username = ?, password = ?, real_name = ?, birthday = ?, phone = ?, address = ? WHERE id = ?";
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getRealName());
+            stmt.setDate(4, new Date(user.getBirthday().getTime()));
+            stmt.setString(5, user.getPhone());
+            stmt.setString(6, user.getAddress());
+            stmt.setLong(7, user.getId());
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println("æŸ¥è¯¢ç”¨æˆ·ä¿¡æ¯å¤±è´¥ã€‚");
+            e.printStackTrace();
+            return false;
+        } finally {
+            ConnectionUtil.release(null, stmt, conn);
+        }
+        return true;
+    }
+
 }

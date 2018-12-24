@@ -1,7 +1,9 @@
 package com.imooc.jdbc.dao;
 
+import com.imooc.jdbc.bean.Message;
+import com.imooc.jdbc.common.ConnectionUtil;
+
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,126 +11,94 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.imooc.jdbc.bean.Message;
-import com.imooc.jdbc.common.ConnectionUtil;
-
-
-/*
- * ÏûÏ¢dao
+/**
+ * æ¶ˆæ¯DAO
+ *
+ * @version 1.0
  */
-public class MessageDao {
+public class MessageDAO {
 
-	
-	/*
-	 * ·ÖÒ³²éÑ¯È«²¿ÁôÑÔ
-	 * page µ±Ç°Ò³Âë
-	 * pageSize Ã¿Ò³¼ÇÂ¼Êı
-	 */
-	public List<Message> getMessages(int page, int pageSize) {
-		
-		String sql = "select * from message order by create_time desc limit ?,?";			//SQLÓï¾ä			
-		
-		return getMessagesBySQL(page, pageSize, sql);	
-	}
-	
-	/*
-	 * ²éÑ¯ÎÒµÄÁôÑÔ
-	 */
-	public List<Message> getMyMessages(int page, int pageSize, long userId) {
-			
-			String sql = "select * from message  where user_id=" + userId + " order by create_time desc limit ?,?";			//SQLÓï¾ä			
-			
-			System.out.println(sql);
-			
-			return getMessagesBySQL(page, pageSize, sql);	
-		}
-	
-	/*
-	 * ²éÑ¯ÁôÑÔµÄÄ£°å·½·¨
-	 */
-	private List<Message> getMessagesBySQL(int page, int pageSize, String sql) {
-		Connection conn = ConnectionUtil.getConnection();				//»ñÈ¡Á¬½Ó	
-		PreparedStatement stmt = null;
+    /**
+     * ä¿å­˜ç•™è¨€ä¿¡æ¯
+     * @param message
+     * @return
+     */
+    public boolean save(Message message) {
+        Connection conn = ConnectionUtil.getConnection();
+        String sql = "insert into message(user_id, username, title, content, create_time) values (?, ?, ?, ?, ?)";
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, message.getUserId());
+            stmt.setString(2, message.getUsername());
+            stmt.setString(3, message.getTitle());
+            stmt.setString(4, message.getContent());
+            stmt.setTimestamp(5, new Timestamp(message.getCreateTime().getTime()));
+            stmt.execute();
+        } catch (Exception e) {
+            System.out.println("ä¿å­˜ç•™è¨€ä¿¡æ¯å¤±è´¥ã€‚");
+            e.printStackTrace();
+            return false;
+        } finally {
+            ConnectionUtil.release(null, stmt, conn);
+        }
+        return true;
+    }
+
+    /**
+     * åˆ†é¡µæŸ¥è¯¢å…¨éƒ¨ç•™è¨€
+     * @param page å½“å‰é¡µç 
+     * @param pageSize æ¯é¡µè®°å½•æ•°
+     * @return
+     */
+    public List<Message> getMessages(int page, int pageSize) {
+        Connection conn = ConnectionUtil.getConnection();
+        String sql = "select * from message order by create_time desc limit ?, ?";//limit m, nï¼šä»ç¬¬mæ¡å¼€å§‹ï¼Œå–å‡ºæ€»å…±næ¡è®°å½•
+        PreparedStatement stmt = null;
         ResultSet rs = null;
-		List<Message> messages = new ArrayList<>();
-		
-		try {
-			stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, (page - 1) * pageSize);					
-			stmt.setInt(2, pageSize);			
-			rs = stmt.executeQuery();					
-			while (rs.next()) {
-				messages.add(new Message(rs.getLong("id"),
-						rs.getLong("user_id"),
-						rs.getString("username"),
-						rs.getString("title"),
-						rs.getString("content"),
-						rs.getTimestamp("create_time"))				//´Ë´¦Ê±¼äµÄ´¦Àí·½Ê½±È½ÏÖØÒª
-						);				
-			}
-		} catch (SQLException e) {
-			System.out.println("²éÑ¯ĞÅÏ¢Ê§°Ü");
-			e.printStackTrace();
-		} finally {
-			ConnectionUtil.release(rs, stmt, conn);			
-		}
-		return messages;
-		
-	}
-	
-	/*
-	 * ¼ÆËãÁôÑÔÊıÄ¿
-	 */
-	public int countMessages() {
-		Connection conn = ConnectionUtil.getConnection();
-		String sql = "select count(*) as total from message";				//²éÑ¯¼ÇÂ¼ÊıÄ¿
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		
-		int num = 0;
-		try {
-			stmt = conn.prepareStatement(sql);
-			rs = stmt.executeQuery();
-			if(rs.next()) {
-				num = rs.getInt("total");
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			ConnectionUtil.release(rs, stmt, conn);
-		}
-		
-		return num;
-	}
-	
-	/*
-	 * Ôö¼Ómessage
-	 */
-	public boolean save(Message message) {
-		Connection conn = ConnectionUtil.getConnection();
-		String sql = "insert message(user_id,username,title,content,create_time) values(?,?,?,?,?)";				//²éÑ¯¼ÇÂ¼ÊıÄ¿
-		PreparedStatement stmt = null;
-		boolean flag = false;
-		try {
-			stmt = conn.prepareStatement(sql);
-			stmt.setLong(1, message.getUserId());
-			stmt.setString(2, message.getUsername());
-			stmt.setString(3, message.getTitle());
-			stmt.setString(4, message.getContent());
-			stmt.setTimestamp(5, new Timestamp( message.getCreateTime().getTime()));								//Ç°ÃæÊÇjava.sql.Date
-			System.out.println("dao²ãÊ±¼ä" + message.getCreateTime());
-			stmt.execute();
-			flag = true;
-		} catch (SQLException e) {
-			System.out.println("¸üĞÂÁôÑÔÒì³£");
-			e.printStackTrace();
-			flag = false;
-			return flag;
-		} finally {
-			ConnectionUtil.release(null, stmt, conn);               								//ÊÍ·Å×ÊÔ´
-		}
-		
-		return flag;
-	}
+        List<Message> messages = new ArrayList<>();
+        try {
+            stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, (page - 1) * pageSize);
+            stmt.setInt(2, pageSize);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                messages.add(new Message(rs.getLong("id"),
+                        rs.getLong("user_id"),
+                        rs.getString("username"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getTimestamp("create_time")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.release(rs, stmt, conn);
+        }
+        return messages;
+    }
+
+    /**
+     * è®¡ç®—æ‰€æœ‰ç•™è¨€æ•°é‡
+     * @return
+     */
+   public int countMessages() {
+       Connection conn = ConnectionUtil.getConnection();
+       String sql = "select count(*) total from message";
+       PreparedStatement stmt = null;
+       ResultSet rs = null;
+       try {
+           stmt = conn.prepareStatement(sql);
+           rs = stmt.executeQuery();
+           while (rs.next()) {
+               return rs.getInt("total");
+           }
+       } catch (SQLException e) {
+           e.printStackTrace();
+       } finally {
+           ConnectionUtil.release(rs, stmt, conn);
+       }
+       return 0;
+   }
+
 }

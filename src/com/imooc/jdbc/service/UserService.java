@@ -2,43 +2,46 @@ package com.imooc.jdbc.service;
 
 import com.imooc.jdbc.bean.User;
 import com.imooc.jdbc.dao.UserDAO;
-import com.sun.org.apache.regexp.internal.REUtil;
 
-/*
- * ÓÃ»§·şÎñ
+/**
+ * UserService
+ *
+ * @version 1.0
  */
 public class UserService {
-	private UserDAO userDAO;
 
-	public UserService() {		
-		userDAO = new UserDAO();
-	}
-	
-	/*
-	 * ÓÃ»§µÇÂ¼
-	 */
-	public User login(String username, String password) {
-		return userDAO.login(username, password);
-	}
-	
-	/*
-	 * ¸ù¾İid»ñÈ¡ÓÃ»§ĞÅÏ¢
-	 */
-	public User getUserById(Long id) {
-		return userDAO.getUserById(id);
-	}
-	
-	/*
-	 * ¸üĞÂÓÃ»§ĞÅÏ¢
-	 */
-	public boolean updateUser(User user) {
+    private UserDAO userDAO;
+
+    public UserService() {
+        userDAO = new UserDAO();
+    }
+
+    /**
+     * ç”¨æˆ·ç™»å½•
+     * @param username ç”¨æˆ·å
+     * @param password å¯†ç 
+     * @return æˆåŠŸè¿”å›ç”¨æˆ·Beanï¼Œå¤±è´¥è¿”å›null
+     */
+    public User login(String username, String password) {
+        return userDAO.login(username, password);
+    }
+
+    /**
+     * æ ¹æ®IDæŸ¥è¯¢ç”¨æˆ·ä¿¡æ¯
+     * @param id
+     * @return
+     */
+    public User getUserById(Long id) {
+        return userDAO.getUserById(id);
+    }
+
+    /**
+     * ä¿®æ”¹ç”¨æˆ·ä¿¡æ¯
+     * @param user
+     * @return
+     */
+    public boolean updateUser(User user) {
         return userDAO.updateUser(user);
     }
-	
-	/*
-	 * Ôö¼ÓÓÃ»§ĞÅÏ¢
-	 */
-	public boolean addUser(User user) {
-		return userDAO.addUser(user);
-	}
+
 }

@@ -1,109 +1,80 @@
 package com.imooc.jdbc.servlet;
 
-import java.io.IOException;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.imooc.jdbc.bean.User;
 import com.imooc.jdbc.service.UserService;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Objects;
+
 /**
- * Servlet implementation class UserServlet
+ * ç”¨æˆ·Servlet
+ *
+ * @version 1.0
  */
-@WebServlet(description = "userServlet", urlPatterns = { "/UserServlet" })
 public class UserServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-	private UserService userService;	
 
-	/**
-	 * @see Servlet#init(ServletConfig)
-	 */
-	public void init(ServletConfig config) throws ServletException {
-		System.out.println("³õÊ¼»¯ userServlet");
-		userService = new UserService();
-	}
+    private UserService userService;
 
-	/**
-	 * @see Servlet#destroy()
-	 */
-	public void destroy() {
-		userService = null;
-	}
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        userService = new UserService();
+    }
 
-	/**
-	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//System.out.println("userServlet·ÃÎÊ");
-		String pathName = request.getServletPath(); 										//»ñÈ¡servletÂ·¾¶
-		if("/userInfo.do".equals(pathName)) {														//²é¿´ÓÃ»§ĞÅÏ¢
-			request.getRequestDispatcher("/WEB-INF/views/biz/user.jsp").forward(request, response); 							//×ª·¢µ½ÓÃ»§ĞÅÏ¢Ò³Ãæ
-		} else if("/editUserPrompt.do".equals(pathName)) {
-			long id = Long.valueOf(request.getParameter("id"));					//»ñµÃÓûĞŞ¸ÄµÄid
-			User user = (User) request.getAttribute("user");
-		   /*System.out.println("Ìø×ªµÄid= " + id);
-			User user = userService.getUserById(id);
-			System.out.println("Ìø×ªºóµÄid=" + user.getId());*/
-			if(user != null) {
-				System.err.println("Ìø×ªĞŞ¸ÄĞÅÏ¢½çÃæ");
-				request.setAttribute("user", user);	
-				request.getRequestDispatcher("/WEB-INF/views/biz/edit_user.jsp").forward(request, response); 							//×ª·¢µ½ĞŞ¸ÄÓÃ»§ĞÅÏ¢Ò³Ãæ			
-			} else {
-				request.getRequestDispatcher("/WEB-INF/views/biz/user.jsp").forward(request, response); 							//×ª·¢µ½ÓÃ»§Ò³Ãæ
-			}
-		} else if ("/editUser.do".equals(pathName)) { 													//ĞŞ¸ÄÍêÓÃ»§ĞÅÏ¢
-			//½ÓÊÜ´«µİ¹ıÀ´µÄ²ÎÊı
-			 Long id = Long.valueOf(request.getParameter("id"));				 
-			// System.out.println("servlet²ãid=" + id);
-			 String username = request.getParameter("name");
-			 String password = request.getParameter("password");
-			 String realName = request.getParameter("realName");
-			 String birthday = request.getParameter("birthday");
-			 String phone = request.getParameter("phone");
-			 String address = request.getParameter("address");				 
-			 User user = new User();
-			 user.setId(id);
-			 user.setUsername(username);
-			 user.setPassword(password);
-			 user.setRealName(realName);
-			 try {
-				user.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(birthday));
-			} catch (ParseException e) {
-				System.out.println("¸ñÊ½»¯ÈÕÆÚÊ§°Ü");
-				e.printStackTrace();
-			}
-			 user.setPhone(phone);
-			 user.setAddress(address);
-			 boolean flag = userService.updateUser(user);    							//¸üĞÂÓÃ»§ĞÅÏ¢
-			 if(flag) { 															//¸üĞÂ³É¹¦
-				 request.getSession().setAttribute("user", user);
-				 request.setAttribute("user", user);				
-				 request.getRequestDispatcher("/WEB-INF/views/biz/user.jsp").forward(request, response); 							//×ª·¢µ½ÓÃ»§Ò³Ãæ
-			 } else {
-				 request.getRequestDispatcher("/WEB-INF/views/biz/404.jsp").forward(request, response);
-			 }			 
-		} else {
-			request.getRequestDispatcher("/WEB-INF/views/biz/404.jsp").forward(request, response);
-		}
-					
-	}
-	
-	/*
-	 * ×ª»¯Ê±¼ä¸ñÊ½
-	 */
-	private String formatDate(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String formatStr = sdf.format(date);
-		return formatStr;
-	}
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String pathName = request.getServletPath();
+        if (Objects.equals("/userInfo.do", pathName)) {
+            request.getRequestDispatcher("/WEB-INF/views/biz/user.jsp").forward(request, response);
+        } else if (Objects.equals("/editUserPrompt.do", pathName)) {
+            //1.ä»Sessionä¸­è·å–ï¼Œå…¶å®å°±æ˜¯ä¸ä¸Šä¸€ä¸ªifåŒæ ·çš„æ–¹å¼
+            //2.å¯æ‰©å±•çš„ä½¿ç”¨æ–¹å¼ï¼šæ ¹æ®é¡µé¢IDä»æ•°æ®åº“ä¸­æŸ¥è¯¢
+            Long id = Long.valueOf(request.getParameter("id"));
+            User user = userService.getUserById(id);
+            if (null != user) {
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/WEB-INF/views/biz/edit_user.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/WEB-INF/views/biz/user.jsp").forward(request, response);
+            }
+        } else if (Objects.equals("/editUser.do", pathName)) {
+            Long id = Long.valueOf(request.getParameter("id"));
+            String name = request.getParameter("name");
+            String password = request.getParameter("password");
+            String realName = request.getParameter("realName");
+            String birthday = request.getParameter("birthday");
+            String phone = request.getParameter("phone");
+            String address = request.getParameter("address");
+            User user = new User();
+            user.setId(id);
+            user.setName(name);
+            user.setPassword(password);
+            user.setRealName(realName);
+            try {
+                user.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(birthday));
+            } catch (ParseException e) {
+                System.out.println("æ ¼å¼åŒ–Birthdayå­—æ®µå¤±è´¥");
+                e.printStackTrace();
+            }
+            user.setPhone(phone);
+            user.setAddress(address);
+            boolean result = userService.updateUser(user);
+            if (result) {
+                request.getSession().setAttribute("user", user);
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/WEB-INF/views/biz/user.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("/WEB-INF/views/biz/404.jsp").forward(request, response);
+            }
+        } else {
+            request.getRequestDispatcher("/WEB-INF/views/error/404.jsp").forward(request, response);
+        }
+    }
 
 }

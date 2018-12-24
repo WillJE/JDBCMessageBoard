@@ -1,53 +1,45 @@
 package com.imooc.jdbc.service;
 
+import com.imooc.jdbc.bean.Message;
+import com.imooc.jdbc.dao.MessageDAO;
+
 import java.util.Date;
 import java.util.List;
 
-import com.imooc.jdbc.bean.Message;
-import com.imooc.jdbc.dao.MessageDao;
-
-/*
- * ÏûÏ¢service
+/**
+ * æ¶ˆæ¯Service
+ *
+ * @version 1.0
  */
 public class MessageService {
-	
-	private MessageDao messageDao;
 
-	/*
-	 * ¹¹ÔìÆ÷
-	 */
-	public MessageService() {
-		messageDao = new MessageDao();			//³õÊ¼»¯dao
-	}
-	
-	/*
-	 * ²éÑ¯ÁôÑÔ
-	 */
-	public List<Message> getMessages(int page, int pageSize) {
-		return messageDao.getMessages(page, pageSize);
-	}
-	
-	/*
-	 * ²éÑ¯ÎÒµÄÁôÑÔ
-	 */
-	public List<Message> getMyMessages(int page, int pageSize, long userId) {
-		return messageDao.getMyMessages(page, pageSize, userId);
-	}
-	/*
-	 * ÁôÑÔÊıÄ¿
-	 */
-	public int countMessages() {
-		return messageDao.countMessages();
-	}
-	
-	/*
-	 * Ôö¼ÓÁôÑÔ
-	 */
-	public boolean addMessage(Message message) {
-		Date date = new Date();
-		message.setCreateTime(date);
-		System.out.println("ÏÖÔÚµÄÊ±¼äÊÇ" + date);
-		System.out.println("ÏÖÔÚµÄidÊÇ" + message.getUserId());
-		return messageDao.save(message);
-	} 
+    private MessageDAO messageDAO;
+
+    public MessageService() {
+        messageDAO = new MessageDAO();
+    }
+
+    public boolean addMessage(Message message) {
+        message.setCreateTime(new Date());
+        return messageDAO.save(message);
+    }
+
+    /**
+     * åˆ†é¡µæŸ¥è¯¢å…¨éƒ¨ç•™è¨€
+     * @param page å½“å‰é¡µç 
+     * @param pageSize æ¯é¡µè®°å½•æ•°
+     * @return
+     */
+    public List<Message> getMessages(int page, int pageSize) {
+        return messageDAO.getMessages(page, pageSize);
+    }
+
+    /**
+     * è®¡ç®—æ‰€æœ‰ç•™è¨€æ•°é‡
+     * @return
+     */
+    public int countMessages() {
+        return messageDAO.countMessages();
+    }
+
 }

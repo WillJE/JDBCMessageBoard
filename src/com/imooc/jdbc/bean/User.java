@@ -2,80 +2,80 @@ package com.imooc.jdbc.bean;
 
 import java.util.Date;
 
-/*
- * �û�bean
+/**
+ * 用户信息
+ *
+ * @version 1.0
  */
 public class User {
-	
-	private long id;
-	
-	private String username;
-	
-	private String password;
-	
-	private String realName;
-	
-	private Date birthday;
-	
-	private String phone;
-	
-	private String address;
 
-	public long getId() {
-		return id;
-	}
+    private long id;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    private String name;
 
-	public String getUsername() {
-		return username;
-	}
+    private String password;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    private String realName;
 
-	public String getPassword() {
-		return password;
-	}
+    private Date birthday;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    private String phone;
 
-	public String getRealName() {
-		return realName;
-	}
+    private String address;
 
-	public void setRealName(String realName) {
-		this.realName = realName;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public Date getBirthday() {
-		return birthday;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	
-	
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

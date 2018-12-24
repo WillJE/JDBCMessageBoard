@@ -1,44 +1,36 @@
 package com.imooc.jdbc.filter;
 
-import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
+import java.io.IOException;
 
 /**
- * ±‡¬Îπ˝¬À
+ * TODO {file desc}
+ *
+ * @version 1.0
  */
-@WebFilter(filterName = "CharsetEncodingFiltr", urlPatterns = { "/CharsetEncodingFiltr" })
 public class CharsetEncodingFilter implements Filter {
-	
-	private String encoding;
-   
-	/**
-	 * @see Filter#destroy()
-	 */
-	public void destroy() {
-		// TODO Auto-generated method stub
-	}
 
-	/**
-	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
-																				throws IOException, ServletException {			
-		request.setCharacterEncoding(encoding);
-		// pass the request along the filter chain
-		chain.doFilter(request, response);
-	}
+    private String encoding;
 
-	/**
-	 * @see Filter#init(FilterConfig)
-	 */
-	public void init(FilterConfig fConfig) throws ServletException {
-		encoding = fConfig.getInitParameter("encoding");			//ªÒµ√≈‰÷√µƒ±‡¬Î		
-	}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        this.encoding = filterConfig.getInitParameter("encoding");
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        servletRequest.setCharacterEncoding(encoding);
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    @Override
+    public void destroy() {
+
+    }
 
 }
